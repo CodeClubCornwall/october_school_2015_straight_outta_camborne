@@ -18,7 +18,7 @@ void rightmove_counter() {
 
 void setup() { 
   //Initalise all the pins
-  Serial.begin(115200);  
+  Serial.begin(9600);  
   pinMode(EA, OUTPUT); 
   pinMode(EB, OUTPUT);
   pinMode(In1, OUTPUT);
@@ -69,19 +69,33 @@ void left_kill_switch() {
     
   
 void loop() {
-  right_motor_forwards();
-  left_motor_forwards();
-  if (LeftClicks > RightClicks) {
-  left_kill_switch();
-  right_motor_forwards();  
+  unsigned long starttime = millis();
+  
+ right_motor_forwards();
+ left_motor_forwards();  
+  
+  while((millis() - starttime) <= 10000){
+    if (LeftClicks > RightClicks) {
+    left_kill_switch();
+    right_motor_forwards();  
+    }
+    if (RightClicks > LeftClicks) {
+    right_kill_switch();
+    left_motor_forwards();  
+    }
+    
+    /* Test for clicks: 
+    Serial.print (LeftClicks);
+    Serial.print (",");
+    Serial.print (RightClicks);
+    Serial.println ();
+    delay(10);*/
+    
   }
-  if (RightClicks > LeftClicks) {
-  right_kill_switch();
-  left_motor_forwards();  
-  }
-  Serial.print (LeftClicks);
-  Serial.print (",");
-  Serial.print (RightClicks);
-  Serial.println ();
+
+ left_kill_switch();
+ right_kill_switch();
+ while(1);
+  
 }
 
