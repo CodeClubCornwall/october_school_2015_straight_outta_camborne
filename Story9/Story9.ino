@@ -226,8 +226,8 @@ void loop() {
    straight_line(100);
    right_kill_switch();
    left_kill_switch();
-   while(1);
-
+   fast_stop();
+   delay(500);                                                                                                                                                                                                        
 //----------------------------------------------------------------------------------------
 //Reverse
 //STORY9
@@ -241,7 +241,7 @@ void loop() {
    fast_stop();
    
    //Turn by 90 Degrees right
-   ninety_degree_turn_right();
+   ninety_degree_turn_left_reverse();
   
   }
    straight_line_reverse(distance);
@@ -257,7 +257,7 @@ void loop() {
    fast_stop();
   
    //Turn by 90 Degrees left
-   ninety_degree_turn_left();
+   ninety_degree_turn_right_reverse();
   
   }
    straight_line_reverse(100);
