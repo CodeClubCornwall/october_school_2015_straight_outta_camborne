@@ -1,8 +1,13 @@
 //Stuff not to forget:
 //1 Meter = 531 clicks
-//Current commit is 'ell dodgy man legit 
+#include <NewPing.h>
 
-//YOLO SW&G 
+#define TRIGGER_PIN  4
+#define ECHO_PIN     5
+#define MAX_DISTANCE 200
+
+NewPing sonar(TRIGGER_PIN, ECHO_PIN, MAX_DISTANCE);
+
 const int EA = 9; //Left Green
 const int EB = 10; //Right Green
 const int In1 = 8; //Left Red
@@ -35,6 +40,7 @@ void setup() {
   digitalWrite(3, HIGH);
   attachInterrupt(0, leftmove_counter, RISING);
   attachInterrupt(1, rightmove_counter, RISING);
+  sonar.ping_cm();
 }
 
 void left_motor_forwards() {
@@ -82,6 +88,13 @@ void fast_stop() {
   digitalWrite(In4, LOW);  
 }
 
+//Detects at 200cm 
+void detect_object() {
+  NewPing(4, 5, 200);
+}
+
+  
+  
 void test_clicks_print() {
     //Test for clicks: 
     Serial.print (LeftClicks);
@@ -108,7 +121,7 @@ void ninety_degree_turn_right() {
 void ninety_degree_turn_left() {
     //Turn by 90 Degrees right
     RightClicks =  0;
-    while(RightClicks < 300){
+    while(RightClicks < 150){
       right_motor_forwards();
       left_kill_switch();
       test_clicks_print();
@@ -146,6 +159,23 @@ void ninety_degree_turn_left_reverse() {
 }
 
 
+void direction_correction() 
+{
+  if (LeftClicks == RightClicks) {
+    right_motor_forwards();
+    left_motor_forwards();
+  }
+  if (LeftClicks > RightClicks) {
+    left_kill_switch();
+    right_motor_forwards();  
+  }
+  if (RightClicks > LeftClicks) {
+    right_kill_switch();
+    left_motor_forwards();  
+  } 
+  
+}
+
 
 //---------------------------------------------------------
 
@@ -158,18 +188,9 @@ void straight_line(int distance) {
   
     //Corrections to move straight.  
     while(LeftClicks < distance) {
-      if (LeftClicks > RightClicks) {
-        left_kill_switch();
-        right_motor_forwards();  
-      }
-      if (RightClicks > LeftClicks) {
-        right_kill_switch();
-        left_motor_forwards();  
-      }
-
+      direction_correction();
     }
 }
-
 void straight_line_reverse(int distance) {
    
   RightClicks = 0;  
@@ -191,80 +212,18 @@ void straight_line_reverse(int distance) {
     }
 }
 
-
+//-----------------------------------------------------------------------------------//
+//--Calling of functions (stage directions)------------------------------------------//
 
 void loop() {
-  const int distance = 75;
-
-//Figure of eight forwards (first Square)
-  for(int loopcounter1 = 0; loopcounter1 < 3; loopcounter1++ ){
-
-   //Keep robot moving in a straight line
-   straight_line(distance);
-
-   fast_stop();
-   
-   //Turn by 90 Degrees right
-   ninety_degree_turn_right();
+  delay(50);
+  int DistanceCM = sonar.ping_cm();
+  direction_correction();
   
-  }
-   straight_line(distance);
-   right_kill_switch();
-   left_kill_switch();
-
-
-//Figure of eight forwards (second Square)
-  for(int loopcounter1 = 0; loopcounter1 < 3; loopcounter1++ ){
-    
-   //Keep robot moving in a straight line
-   straight_line(distance);
+  if(DistanceCM < 40 && DistanceCM != 0) {
    fast_stop();
-  
-   //Turn by 90 Degrees left
+   delay(1000);
    ninety_degree_turn_left();
-  
-  }
-   straight_line(100);
-   right_kill_switch();
-   left_kill_switch();
-   fast_stop();
-   delay(500);                                                                                                                                                                                                        
-//----------------------------------------------------------------------------------------
-//Reverse
-//STORY9
-//Figure of eight reverse (first Square)
-
-  for(int loopcounter1 = 0; loopcounter1 < 3; loopcounter1++ ){
-
-   //Keep robot moving in a straight line
-   straight_line_reverse(distance);
-
-   fast_stop();
-   
-   //Turn by 90 Degrees right
-   ninety_degree_turn_left_reverse();
-  
-  }
-   straight_line_reverse(distance);
-   right_kill_switch();
-   left_kill_switch();
-
-
-//Figure of eight forwards (second Square)
-  for(int loopcounter1 = 0; loopcounter1 < 3; loopcounter1++ ){
-    
-   //Keep robot moving in a straight line
-   straight_line_reverse(distance);
-   fast_stop();
-  
-   //Turn by 90 Degrees left
-   ninety_degree_turn_right_reverse();
-  
-  }
-   straight_line_reverse(100);
-   right_kill_switch();
-   left_kill_switch();
    while(1);
-
+  }
 }
-
