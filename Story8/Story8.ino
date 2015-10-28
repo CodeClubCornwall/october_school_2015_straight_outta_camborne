@@ -89,7 +89,7 @@ void test_clicks_print() {
 void ninety_degree_turn_right() {
     //Turn by 90 Degrees right
     LeftClicks = 0;
-    while(LeftClicks < 278){
+    while(LeftClicks < 300){
       left_motor_forwards();
       right_kill_switch();
       test_clicks_print();
@@ -101,7 +101,7 @@ void ninety_degree_turn_right() {
 void ninety_degree_turn_left() {
     //Turn by 90 Degrees right
     RightClicks =  0;
-    while(RightClicks < 278){
+    while(RightClicks < 300){
       right_motor_forwards();
       left_kill_switch();
       test_clicks_print();
@@ -136,13 +136,14 @@ void straight_line(int distance) {
 //1 Meter = 531 clicks
 
 void loop() {
-  const int distance = 150;
+  const int distance = 75;
   for(int loopcounter1 = 0; loopcounter1 < 3; loopcounter1++ ){
     
    //Keep robot moving in a straight line
    straight_line(distance);
 
-  
+   fast_stop();
+   
    //Turn by 90 Degrees right
    ninety_degree_turn_right();
   
@@ -155,13 +156,13 @@ void loop() {
     
    //Keep robot moving in a straight line
    straight_line(distance);
-
+   fast_stop();
   
    //Turn by 90 Degrees left
    ninety_degree_turn_left();
   
   }
-   straight_line(distance);
+   straight_line(100);
    right_kill_switch();
    left_kill_switch();
    while(1);
