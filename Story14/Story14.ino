@@ -263,6 +263,10 @@ void go_toward_light() {
       left_motor_forwards();
       right_kill_switch();
     } 
+    else if (middleLightRead < 18) {
+      fast_stop();
+      while(1);    
+     }
     else {
       right_motor_forwards();
       left_motor_forwards();
