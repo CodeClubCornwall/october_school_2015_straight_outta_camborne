@@ -234,17 +234,22 @@ void loop() {
   leftLightRead = analogRead(leftLight);
   middleLightRead = analogRead(middleLight);
   rightLightRead = analogRead(rightLight);
+/*
+erial.print("Left:");
+  Serial.println(leftLightRead);
+  Serial.print("Middle:");  
+  Serial.println(middleLightRead);
+  Serial.print("Right:");  
+  Serial.println(rightLightRead);
+  delay(5000);*/
   
-  Serial.print(leftLightRead);
-  Serial.print(middleLightRead);
-  Serial.print(rightLightRead);
   
-  if (middleLightRead < leftLightRead) {
+  if (middleLightRead > leftLightRead) {
     right_motor_forwards();
     left_kill_switch();
   }
   
-  else if (middleLightRead < rightLightRead) {
+  else if (middleLightRead > rightLightRead) {
     left_motor_forwards();
     right_kill_switch();
   }
